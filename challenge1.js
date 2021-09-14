@@ -30,37 +30,57 @@ const getLines = numberOfLines => {
   return lines;
 }
 
+const orderArrayByLength = line => {
+  let separatedLine = line.split(' ');
+  let sortedWordsByLength = [];
+  
+  for(let word of separatedLine) {
+      
+    if (sortedWordsByLength.length <= 0) {
+      sortedWordsByLength.push(word);
+        
+    } else {
+      sortedWordsByLength.forEach((item, index, array) => {
+        if (word.length > item.length && !sortedWordsByLength.includes(word)) {
+          sortedWordsByLength.splice(index, 0, word);
+        }
+        
+        if (!sortedWordsByLength.includes(word) && index === sortedWordsByLength.length - 1) {
+          sortedWordsByLength.push(word);
+        }
+      });
+    }
+  }
+  
+  return sortedWordsByLength.join(' ');
+}
+
+const orderArrayAlphabetically = sortedWordsByLength => {
+  let separatedLine = sortedWordsByLength.split(' ');
+  let lengths = [];
+  
+  separatedLine.forEach((item) => lengths.push(item.length));
+  let nonRepeatedLengths = [...new Set(lengths)];
+  let sortedAlphabeticallyWords = [];
+  
+  nonRepeatedLengths.forEach((length) => {
+    let sortedItem = separatedLine.filter(item => item.length === length);
+	sortedItem.sort();
+    sortedAlphabeticallyWords = sortedAlphabeticallyWords.concat(sortedItem);
+	debugger;
+  });
+  return sortedAlphabeticallyWords.join(' ');
+  
+}
+
 const orderArray = arrayOfLines => {
   let newArray = [];
   
   for(let i=0; i < arrayOfLines.length; i++) {
     let line = arrayOfLines[i];
-    let separatedLine = line.split(' ');
-    let sortedWords = [];
-    
-    for(let word of separatedLine) {
-      
-      if (sortedWords.length <= 0) {
-        sortedWords.push(word);
-      } else {
-        sortedWords.forEach((item, index, array) => {
-          if (word.length > item.length && !sortedWords.includes(word)) {
-            sortedWords.splice(index, 0, word);
-          }
-          
-          if (!sortedWords.includes(word) && index == sortedWords.length - 1) {
-            sortedWords.push(word);
-          }
-        });
-      }
-      
-      if (sortedWords.toString() === separatedLine.toString()) {
-            sortedWords.sort();
-      }
-      
-    }
-    
-    newArray.push(sortedWords.join(' '));
+    let sortedWordsByLength = orderArrayByLength(line);
+    let sortedWordsByLengthAndAlphabetically = orderArrayAlphabetically(sortedWordsByLength);
+    newArray.push(sortedWordsByLengthAndAlphabetically);
     
   }
   
@@ -71,4 +91,4 @@ let numberOfLines = getNumberOfLines();
 let lines = getLines(numberOfLines);
 let sortedLines = orderArray(lines);
 
-console.log(sortedLines, lines);
+sortedLines.forEach(item => console.log(item));
